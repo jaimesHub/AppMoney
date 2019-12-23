@@ -28,6 +28,7 @@ def index():
         current_money = 0
         income_money = 0
         outcome_money = 0
+        categories = [0, 0, 0, 0, 0]
         for item in this_month:
             # print(ObjectId(item['id_user']) == ObjectId(session['ids']))
             # print('Id user retrived from db: ', item['id_user'])
@@ -36,12 +37,25 @@ def index():
             if ObjectId(item['id_user']) == ObjectId(session['ids']):
                 if item['type'] == 'Income':
                     income_money += int(item['expense'])
-                else:
+                elif item['type'] == 'Outcome':
                     outcome_money += int(item['expense'])
+
+            if ObjectId(item['id_user']) == ObjectId(session['ids']):
+                if item['category'] == 'Personal':
+                    categories[0] += int(item['expense'])
+                elif item['category'] == 'Health':
+                    categories[1] += int(item['expense'])
+                elif item['category'] == 'Family':
+                    categories[2] += int(item['expense'])
+                elif item['category'] == 'Debt/Loan':
+                    categories[3] += int(item['expense'])
+                elif item['category'] == 'Income':
+                    categories[4] += int(item['expense'])
+
         current_money = income_money - outcome_money
 
         # show the main page
-        return render_template('index.html', current=current_money, income=income_money, outcome=outcome_money, data=db.get_all_transactions())
+        return render_template('index.html', current=current_money, income=income_money, outcome=outcome_money, data=db.get_all_transactions(), categories=categories)
     else:
         return redirect('/login')
 
@@ -50,7 +64,7 @@ def index():
 def show_add_transaction_page():
     if 'loggedin' in session:
         return render_template('form.html')
-    return "Not found!"
+    return redirect('/login')
 
 
 @app.route('/add_transaction/', methods=["POST"])
@@ -75,7 +89,7 @@ def add_new_transaction():
     
     # should redirect back to charts.html, not index.html
         return redirect(url_for('go_to_charts_page'))
-    return "Not found"
+    return redirect('/login')
 
 
 @app.route('/charts/')
@@ -101,37 +115,40 @@ def go_to_charts_page():
                 elif item['type'] == 'Outcome':
                     lst_outcome[int(date.split('-')[1]) - 1] += int(item['expense'])
 
+            if ObjectId(item['id_user']) == ObjectId(session['ids']):
         # print(lst_income)
             # print(lst_income)
-            if sum(lst_income) != 0 or sum(lst_outcome) != 0:
-                lst_totalIncomeOutcome = [sum(lst_income), sum(lst_outcome)]
+                if sum(lst_income) != 0 or sum(lst_outcome) != 0:
+                    lst_totalIncomeOutcome = [sum(lst_income), sum(lst_outcome)]
+
+            if ObjectId(item['id_user']) == ObjectId(session['ids']):
+                # category = item['category']
+                # print("Aloooooooooo", category, lst_categories[1])
+                if item['category'] == 'Personal':
+                    lst_categories[0] += int(item['expense'])
+                elif item['category'] == 'Health':
+                    lst_categories[1] += int(item['expense'])
+                elif item['category'] == 'Family':
+                    lst_categories[2] += int(item['expense'])
+                elif item['category'] == 'Debt/Loan':
+                    lst_categories[3] += int(item['expense'])
+                elif item['category'] == 'Income':
+                    lst_categories[4] += int(item['expense'])
 
         # print(lst_totalIncomeOutcome)
         # lst_totalIncomeOutcome = [70, 30]
 
-        for item in data:
-            if ObjectId(item['id_user']) == ObjectId(session['ids']):
-                category = item['category']
-                if category == 'Personal':
-                    lst_categories[0] += int(category)
-                elif category == 'Health':
-                    lst_categories[1] += int(category)
-                elif category == 'Family':
-                    lst_categories[2] += int(category)
-                elif category == 'Debt/Loan':
-                    lst_categories[3] += int(category)
-                elif category == 'Income':
-                    lst_categories[4] += int(category)
+
 
         return render_template('charts.html', data=db.get_all_transactions(), income=json.dumps(lst_income), outcome=json.dumps(lst_outcome), totalIncomeOutCome=json.dumps(lst_totalIncomeOutcome), id_user=ObjectId(session['ids']), categories=json.dumps(lst_categories))
-    return "Not found!"
+    return redirect('/login')
 
 
 @app.route('/charts/', methods=["POST"])
 def show_info():
     if 'loggedin' in session:
         return redirect(url_for('go_to_charts_page'))
-    return "Not found!"
+    return redirect('/login')
 
 
 @app.route('/delete/<id_item>')
@@ -139,7 +156,7 @@ def delete_item(id_item):
     if "loggedin" in session:
         db.delete_item_from_db(id_item)
         return redirect(url_for('go_to_charts_page'))
-    return "Not found!"
+    return redirect('/login')
 
 
 @app.route('/edit/<id_item>')
@@ -148,7 +165,7 @@ def go_to_edit(id_item):
     # should go to page form.html
     if "loggedin" in session:
         return render_template('edit_form.html')
-    return "Not found"
+    return redirect('/login')
 
 @app.route('/edit/<id_item>', methods=['POST'])
 def edit_item(id_item):
@@ -164,7 +181,7 @@ def edit_item(id_item):
             id_item, expense, category, note, date, wallet, in_out)
 
         return redirect(url_for('go_to_charts_page'))
-    return "Not found!"
+    return redirect('/login')
 
 
 @app.route('/login', methods=['GET', 'POST'])
