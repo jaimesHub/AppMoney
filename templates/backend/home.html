@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+</head>
+
+<body>
+    <form method="POST">
+        <table>
+            <tr>
+                <th>Số tiền hiện tại</th>
+            </tr>
+            <tr>
+                <td>{{ current }}</td>
+            </tr>
+        </table>
+    </form>
+    <br><br>
+    <div>
+        <form>
+            <table border="1" style="width:100%">
+                <tr>
+                    <th>Số tiền dành ra</th>
+                    <th>Nhóm</th>
+                    <th>Ghi chú</th>
+                    <th>Thời gian</th>
+                    <th>Loại tiền</th>
+                    <th>Income/Outcome</th>
+                </tr>
+
+                {% for item in data %}
+                <tr>
+                    <td>{{ item.expense }}</td>
+                    <td>{{item.category}}</td>
+                    <td>{{item.note}}</td>
+                    <td>{{item.date}}</td>
+                    <td>{{item.wallet}}</td>
+                    <td>{{ item.type }}</td>
+                    <td><a href="/delete/{{ item._id }}">Delete</a></td>
+                    <td><a href="/edit/{{ item._id }}">Edit</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+            <br><br>
+            <button type="button"><a href="/add_transaction">Thêm giao dịch</a></button>
+        </form>
+    </div>
+    <br><br>
+    <div>
+        <table border="1">
+            <tr>
+                <th>Income</th>
+                <th>Outcome</th>
+            </tr>
+
+            <tr>
+                <td>{{ income }}</td>
+                <td>{{ outcome }}</td>
+            </tr>
+        </table>
+    </div>
+
+
+</body>
+
+</html>

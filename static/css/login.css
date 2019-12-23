@@ -1,0 +1,19 @@
+.login-container {
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Roboto', sans-serif;
+}
+
+.bg-login {
+    background-color: rgb(130, 175, 104, 0.7);
+}
+
+.form--wrapper {
+    width: 500px;
+    max-width: 500px;
+    min-width: 500px;
+}
+
+.login-form p {
+    color: red;
+}

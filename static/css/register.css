@@ -1,0 +1,12 @@
+.register-container {
+    min-height: 100vh;
+}
+
+.form-control.register-form {
+    width: 350px;
+    margin: 25vh auto;
+}
+
+.register-form p {
+    color: red;
+}
